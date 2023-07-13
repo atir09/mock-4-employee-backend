@@ -59,12 +59,26 @@ EmployeeRoute.get('/', async (req, res) => {
 // GET request for filtered employees by department
 EmployeeRoute.get('/filter', async (req, res) => {
     const { department } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
 
     try {
-        const employees = await Employee.find({ department })
+        const totalEmployees = await Employee.countDocuments();
+        const totalPages = Math.ceil(totalEmployees / limit);
+        let employees;
+        if(department==""){
+            employees = await Employee.find()
+        }else{
+            employees = await Employee.find({ department })
+        }
+         
 
         res.status(200).send({
-            employees
+            page,
+            totalPages,
+            employees,
+            department
         });
     } catch (err) {
         res.status(500).send({ msg: err.message });
@@ -74,12 +88,19 @@ EmployeeRoute.get('/filter', async (req, res) => {
 // GET request for sorted employees by salary
 EmployeeRoute.get('/sort', async (req, res) => {
     const { sortBy } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
 
     try {
+        const totalEmployees = await Employee.countDocuments();
+        const totalPages = Math.ceil(totalEmployees / limit);
         const employees = await Employee.find().sort({ salary: sortBy })
 
         res.status(200).send({
-            employees
+            page,
+            totalPages,
+            employees,
         });
     } catch (err) {
         res.status(500).send({ msg: err.message });
@@ -91,12 +112,19 @@ EmployeeRoute.get('/sort', async (req, res) => {
 // GET request for searching employees by first name
 EmployeeRoute.get('/api/employees/search', async (req, res) => {
     const { firstName } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
 
     try {
+        const totalEmployees = await Employee.countDocuments();
+        const totalPages = Math.ceil(totalEmployees / limit);
         const employees = await Employee.find({ firstName });
 
         res.status(200).send({
-            employees
+            employpage,
+            totalPages,
+            employees,ees
         });
     } catch (err) {
         res.status(500).send({ msg: err.message });
