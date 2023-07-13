@@ -68,7 +68,8 @@ EmployeeRoute.get('/filter', async (req, res) => {
         const totalPages = Math.ceil(totalEmployees / limit);
         let employees;
         if(department==""){
-            employees = await Employee.find()
+            employees = await Employee.find().skip(skip).limit(limit);
+            
         }else{
             employees = await Employee.find({ department })
         }
@@ -77,8 +78,7 @@ EmployeeRoute.get('/filter', async (req, res) => {
         res.status(200).send({
             page,
             totalPages,
-            employees,
-            department
+            employees
         });
     } catch (err) {
         res.status(500).send({ msg: err.message });
@@ -119,12 +119,14 @@ EmployeeRoute.get('/api/employees/search', async (req, res) => {
     try {
         const totalEmployees = await Employee.countDocuments();
         const totalPages = Math.ceil(totalEmployees / limit);
-        const employees = await Employee.find({ firstName });
+        const employees = await Employee.find({
+            firstName: { $regex: new RegExp(firstName, 'i') },
+          });
 
         res.status(200).send({
-            employpage,
+            page,
             totalPages,
-            employees,ees
+            employees,
         });
     } catch (err) {
         res.status(500).send({ msg: err.message });
