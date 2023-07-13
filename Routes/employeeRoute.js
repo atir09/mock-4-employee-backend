@@ -56,7 +56,53 @@ EmployeeRoute.get('/', async (req, res) => {
     }
 });
 
+// GET request for filtered employees by department
+EmployeeRoute.get('/filter', async (req, res) => {
+    const { department } = req.query;
 
+    try {
+        const employees = await Employee.find({ department })
+
+        res.status(200).send({
+            employees
+        });
+    } catch (err) {
+        res.status(500).send({ msg: err.message });
+    }
+});
+
+// GET request for sorted employees by salary
+EmployeeRoute.get('/sort', async (req, res) => {
+    const { sortBy } = req.query;
+
+    try {
+        const employees = await Employee.find().sort({ salary: sortBy })
+
+        res.status(200).send({
+            employees
+        });
+    } catch (err) {
+        res.status(500).send({ msg: err.message });
+
+    }
+});
+
+
+// GET request for searching employees by first name
+EmployeeRoute.get('/api/employees/search', async (req, res) => {
+    const { firstName } = req.query;
+
+    try {
+        const employees = await Employee.find({ firstName });
+
+        res.status(200).send({
+            employees
+        });
+    } catch (err) {
+        res.status(500).send({ msg: err.message });
+
+    }
+});
 
 
 
@@ -105,6 +151,6 @@ EmployeeRoute.delete('/:id', async (req, res) => {
     }
 });
 
-module.exports={
+module.exports = {
     EmployeeRoute
 }
