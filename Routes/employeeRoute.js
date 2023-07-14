@@ -110,8 +110,8 @@ EmployeeRoute.get('/sort', async (req, res) => {
 
 
 // GET request for searching employees by first name
-EmployeeRoute.get('/api/employees/search', async (req, res) => {
-    const { firstName } = req.query;
+EmployeeRoute.get('/search', async (req, res) => {
+    const { firstName } = req.query || ""
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
     const skip = (page - 1) * limit;
